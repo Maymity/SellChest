@@ -1,0 +1,8 @@
+name: SellChest
+version: 4.5
+author: Maymity
+depend: [Vault]
+main: it.maymity.sellchest.Main
+commands:
+  sellchest:
+    description: View the plugin information/Boost Command
