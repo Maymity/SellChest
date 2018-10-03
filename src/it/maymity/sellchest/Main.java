@@ -3,7 +3,6 @@ package it.maymity.sellchest;
 import it.maymity.sellchest.managers.ItemsManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.Listener;
@@ -19,11 +18,12 @@ import java.util.ArrayList;
 
 public class Main extends JavaPlugin implements Listener {
 
-    static double config_version = 4.5;
+    static double config_version = 4.6;
     private static Main instance;
     private Economy economy;
     private Configuration messages;
     private ArrayList<ItemsManager> items = new ArrayList<ItemsManager>();
+    private ArrayList<ItemsManager> blacklist = new ArrayList<ItemsManager>();
 
     public static Main getInstance(){
         return instance;
@@ -32,6 +32,8 @@ public class Main extends JavaPlugin implements Listener {
         return economy;
     }
     public ArrayList<ItemsManager> getItems() {return items;}
+
+    public ArrayList<ItemsManager> getBlacklist() { return blacklist;}
 
     public Configuration getMessages(){ return messages;}
 
@@ -93,15 +95,12 @@ public class Main extends JavaPlugin implements Listener {
             System.out.println("&cNewest version: &a" + config_version);
         }
 
-        getConfig().options().copyDefaults(true);
         messages = new Configuration("messages.yml", this, true);
-        saveConfig();
+        saveDefaultConfig();
     }
 
     public void onDisable() {
         System.out.println("SellChest > Plugin disabled!");
-        messages.save();
-        saveConfig();
     }
 
     private void registerListeners() {
@@ -117,8 +116,6 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     private void setupDepends(){
-        PluginManager pm = Bukkit.getPluginManager();
-
         //Vault
         RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         if (economyProvider != null)
@@ -130,28 +127,32 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public void loadItems(){
-        int count = 0;
+        int item = 0;
+        int black = 0;
         for (String s : getConfig().getStringList("itemsold")) {
             String[] split = s.split(":");
             double prezzo;
             Material material = Material.getMaterial(split[0].toUpperCase());
             short damage = 0;
-            if(material == null){
-                System.out.println("SellChest > Incorrect items to sell, write the correct name! Check your config.yml");
-                Bukkit.getPluginManager().disablePlugin(this);
-            }
             if (split.length == 3) {
                 damage = Short.parseShort(split[1]);
                 prezzo = Double.parseDouble(split[2]);
             }
-            else {
+            else
                 prezzo = Double.parseDouble(split[1]);
-            }
-            count++;
+            item++;
             items.add(new ItemsManager(material, damage, prezzo));
         }
-        System.out.println("SellChest > " + count + " items loaded!");
+        System.out.println("SellChest > " + item + " items loaded!");
+        for (String s : getConfig().getStringList("blacklist")) {
+            String[] split = s.split(":");
+            Material material = Material.getMaterial(split[0].toUpperCase());
+            short damage = 0;
+            if (split.length == 2)
+                damage = Short.parseShort(split[1]);
+            black++;
+            blacklist.add(new ItemsManager(material, damage));
+        }
+        System.out.println("SellChest > " + black + " blacklisted items loaded!");
     }
-
-
 }

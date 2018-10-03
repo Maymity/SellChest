@@ -14,10 +14,12 @@ public class ItemsManager {
         this.prize = prize;
     }
 
-    public Material getMaterial() {
-
-        return material;
+    public ItemsManager(Material material, short damage) {
+        this.material = material;
+        this.damage = damage;
     }
+
+    public Material getMaterial() { return material; }
 
     public short getDamage() {
         return damage;

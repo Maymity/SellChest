@@ -1,5 +1,5 @@
 name: SellChest
-version: 4.5
+version: 4.7
 author: Maymity
 depend: [Vault]
 main: it.maymity.sellchest.Main

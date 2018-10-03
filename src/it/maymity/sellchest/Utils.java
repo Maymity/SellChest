@@ -107,13 +107,15 @@ public class Utils {
             if (item != null) {
                 if (item.getType() != Material.AIR) {
                     for (int i = 0; i < Main.getInstance().getItems().size(); i++) {
-                        if (item.getType() == Main.getInstance().getItems().get(i).getMaterial() && item.getDurability() == Main.getInstance().getItems().get(i).getDamage()) {
-                            double valore = Main.getInstance().getItems().get(i).getPrize();
-                            prezzo += valore * item.getAmount();
-                            if (Utils.getInstance().hasBoost(p))
-                                prezzo = prezzo * boost;
-                            Main.getInstance().getEconomy().depositPlayer(p, prezzo);
-                            attached.removeItem(item, new ItemStack(Material.AIR));
+                        if (item.getType() != Main.getInstance().getBlacklist().get(i).getMaterial() && item.getDurability() != Main.getInstance().getBlacklist().get(i).getDamage()) {
+                            if (item.getType() == Main.getInstance().getItems().get(i).getMaterial() && item.getDurability() == Main.getInstance().getItems().get(i).getDamage()) {
+                                double valore = Main.getInstance().getItems().get(i).getPrize();
+                                prezzo += valore * item.getAmount();
+                                if (Utils.getInstance().hasBoost(p))
+                                    prezzo = prezzo * boost;
+                                Main.getInstance().getEconomy().depositPlayer(p, prezzo);
+                                attached.removeItem(item, new ItemStack(Material.AIR));
+                            }
                         }
                     }
                 }
