@@ -9,9 +9,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class SpigotUpdater {
 
-    private int project = 43857;
+    private int project;
     private URL checkURL;
-    private String newVersion = "";
+    private String newVersion;
     private JavaPlugin plugin;
 
     public SpigotUpdater(JavaPlugin plugin, int projectID) {
@@ -22,10 +22,6 @@ public class SpigotUpdater {
             this.checkURL = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + projectID);
         } catch (MalformedURLException e) {
         }
-    }
-
-    public int getProjectID() {
-        return project;
     }
 
     public JavaPlugin getPlugin() {
