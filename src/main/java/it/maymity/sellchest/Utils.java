@@ -1,29 +1,25 @@
 package it.maymity.sellchest;
 
-import it.maymity.sellchest.managers.MessagesManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import java.util.HashMap;
 import java.util.List;
-import org.bukkit.configuration.file.FileConfiguration;
-import java.util.ArrayList;
-import org.bukkit.block.Sign;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class Utils {
 
+    private final SellChest plugin = SellChest.getInstance();
+    
     private static Utils instance;
 
     private HashMap<Player, Integer> cooldownTime = new HashMap<Player, Integer>();
     private HashMap<Player, BukkitRunnable> cooldownTask = new HashMap<Player, BukkitRunnable>();
     private HashMap<String, Integer> timeRemaining = new HashMap<String, Integer>();
 
-    private FileConfiguration config;
     private List<String> signmessage;
     private boolean newupdate = false;
     private String updatelink;
@@ -45,18 +41,13 @@ public class Utils {
     public void setUpdateLink(String b){ updatelink = b; }
     public Boolean getNewUpdateCheck() { return newupdate;}
     public String getUpdateLink() { return updatelink; }
-    public FileConfiguration getMessages() { return Main.getInstance().getMessages().getConfig(); }
-
-    public FileConfiguration getConfig() {
-        config = Bukkit.getServer().getPluginManager().getPlugin("SellChest").getConfig();
-        return config;
-    }
 
     public List<String> getSignmessage() {
         signmessage = Bukkit.getPluginManager().getPlugin("SellChest").getConfig().getStringList("signmessage");
         return signmessage;
     }
 
+    /* TODO usare QLIb per menu
     public static Inventory getBoostInventory() {
         Inventory gamesell = Bukkit.createInventory(null, 9, ChatColor.translateAlternateColorCodes('&', Utils.getInstance().getConfig().getString("game_sell_booster.display_name")));
         ItemStack item = new ItemStack(Material.valueOf(getInstance().getConfig().getString("game_sell_booster.item").toUpperCase()));
@@ -78,12 +69,7 @@ public class Utils {
         gamesell.setItem(4, item);
 
         return gamesell;
-    }
-
-    public void gethelp(Player player) {
-        for (String c : getMessages().getStringList("messages.help-commands"))
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', c));
-    }
+    }*/
 
     public Boolean checkSign(Sign signLine){
         boolean control = false;
@@ -99,44 +85,30 @@ public class Utils {
             return false;
     }
 
-    public void processChest(ItemStack[] chestinv, Player p, Inventory attached) {
-        double prezzo = 0;
-        double boost = Utils.getInstance().getConfig().getDouble("game_sell_booster.boost%");
+    public void processChest(Player player, Inventory inv) {
+        double prezzo = SellChest.getInstance().getItemManager().getItemsPrice(inv);
+        double boost = SellChest.getInstance().getConfiguration().getDouble("game_sell_booster.boost%");
 
-        for (ItemStack item : chestinv) {
-            if (item != null) {
-                if (item.getType() != Material.AIR) {
-                    for (int i = 0; i < Main.getInstance().getItems().size(); i++) {
-                        if (item.getType() != Main.getInstance().getBlacklist().get(i).getMaterial() && item.getDurability() != Main.getInstance().getBlacklist().get(i).getDamage()) {
-                            if (item.getType() == Main.getInstance().getItems().get(i).getMaterial() && item.getDurability() == Main.getInstance().getItems().get(i).getDamage()) {
-                                double valore = Main.getInstance().getItems().get(i).getPrize();
-                                prezzo += valore * item.getAmount();
-                                if (Utils.getInstance().hasBoost(p))
-                                    prezzo = prezzo * boost;
-                                Main.getInstance().getEconomy().depositPlayer(p, prezzo);
-                                attached.removeItem(item, new ItemStack(Material.AIR));
-                            }
-                        }
-                    }
-                }
-            }
+        if(prezzo == 0){
+            plugin.getMessages().getMessage("messages.no_item").sendMessage(player);
+            return;
         }
-        if (prezzo == 0)
-            MessagesManager.getInstance().sendMessage(p, Utils.getInstance().getMessages().getString("messages.no_item"));
-        else
-            MessagesManager.getInstance().sendMessage(p, Utils.getInstance().getMessages().getString("messages.sell_message").replaceAll("%money%", Double.toString(prezzo)));
+        
+        if(hasBoost(player))
+            prezzo *= boost;
+        
+        plugin.getEconomy().depositPlayer(player, prezzo);
+        plugin.getMessages().getMessage("messages.sell_message").setVariable("money", String.valueOf(prezzo)); 
     }
 
-    public Boolean hasBoost(Player player)
-    {
+    public Boolean hasBoost(Player player) {
         if (getInstance().getCooldownTime().containsKey(player))
                 return true;
             else
                 return false;
     }
 
-    public void setPlayerBoost(Player player, int time)
-    {
+    public void setPlayerBoost(Player player, int time) {
         cooldownTime.put(player, time);
         cooldownTask.put(player, new BukkitRunnable() {
             public void run() {
@@ -149,7 +121,7 @@ public class Utils {
                 }
             }
         });
-        cooldownTask.get(player).runTaskTimer(Main.getInstance(), 20, 20);
+        cooldownTask.get(player).runTaskTimer(SellChest.getInstance(), 20, 20);
     }
 
     public Integer getTimeRemaining(Player player) {

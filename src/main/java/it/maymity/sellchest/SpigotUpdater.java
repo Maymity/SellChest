@@ -1,20 +1,21 @@
 package it.maymity.sellchest;
 
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import org.bukkit.plugin.java.JavaPlugin;
 
-public class SpigotUpdater {
+class SpigotUpdater {
 
     private int project;
     private URL checkURL;
     private String newVersion;
     private JavaPlugin plugin;
 
-    public SpigotUpdater(JavaPlugin plugin, int projectID) {
+    SpigotUpdater(JavaPlugin plugin, int projectID) {
         this.plugin = plugin;
         this.newVersion = plugin.getDescription().getVersion();
         this.project = projectID;
@@ -24,19 +25,19 @@ public class SpigotUpdater {
         }
     }
 
-    public JavaPlugin getPlugin() {
+    JavaPlugin getPlugin() {
         return plugin;
     }
 
-    public String getLatestVersion() {
+    String getLatestVersion() {
         return newVersion;
     }
 
-    public String getResourceURL() {
+    String getResourceURL() {
         return "https://www.spigotmc.org/resources/" + project;
     }
 
-    public boolean checkForUpdates() throws Exception {
+    boolean checkForUpdates() throws Exception {
         URLConnection con = checkURL.openConnection();
         this.newVersion = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
         return !plugin.getDescription().getVersion().equals(newVersion);

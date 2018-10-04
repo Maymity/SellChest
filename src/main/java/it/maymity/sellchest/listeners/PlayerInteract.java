@@ -1,5 +1,6 @@
 package it.maymity.sellchest.listeners;
 
+import it.maymity.sellchest.SellChest;
 import it.maymity.sellchest.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -10,15 +11,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.material.Sign;
-import it.maymity.sellchest.managers.MessagesManager;
-import org.bukkit.inventory.Inventory;
 
 public class PlayerInteract implements Listener {
+    
+    private final SellChest plugin = SellChest.getInstance();
+    
     @EventHandler
     public void onSignInteract(PlayerInteractEvent event) {
-
         Player p = event.getPlayer();
         Block b = event.getClickedBlock();
 
@@ -37,13 +39,13 @@ public class PlayerInteract implements Listener {
                                             InventoryHolder i = ((InventoryHolder) attached.getState());
                                             Inventory inv = i.getInventory();
                                             if (((InventoryHolder) attached.getState()).getInventory().getType().equals(InventoryType.CHEST)) {
-                                                Utils.getInstance().processChest(inv.getContents(), event.getPlayer(), inv);
+                                                Utils.getInstance().processChest(p, inv);
                                             }
                                         }
                                     } else
-                                        MessagesManager.getInstance().sendMessage(p, Utils.getInstance().getMessages().getString("messages.only_survival"));
+                                        plugin.getMessages().getMessage("messages.only_survival").sendMessage(p);
                                 } else
-                                    MessagesManager.getInstance().sendMessage(p, Utils.getInstance().getMessages().getString("messages.no_permissionsell"));
+                                    plugin.getMessages().getMessage("messages.no_permissionsell").sendMessage(p);
                             }
                         }
                     }
