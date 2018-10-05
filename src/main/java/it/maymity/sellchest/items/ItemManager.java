@@ -1,4 +1,4 @@
-package it.maymity.sellchest.newmanagers;
+package it.maymity.sellchest.items;
 
 import it.maymity.sellchest.SellChest;
 import it.xquickglare.qlib.configuration.Configuration;

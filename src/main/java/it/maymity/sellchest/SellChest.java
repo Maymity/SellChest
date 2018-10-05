@@ -1,9 +1,9 @@
 package it.maymity.sellchest;
 
+import it.maymity.sellchest.boosts.BoostManager;
 import it.maymity.sellchest.commands.SellChestCommand;
+import it.maymity.sellchest.items.ItemManager;
 import it.maymity.sellchest.listeners.*;
-import it.maymity.sellchest.managers.ItemsManager;
-import it.maymity.sellchest.newmanagers.ItemManager;
 import it.xquickglare.qlib.configuration.YAMLConfiguration;
 import it.xquickglare.qlib.objects.QLibPlugin;
 import lombok.Getter;
@@ -11,26 +11,24 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import java.util.ArrayList;
-
 public class SellChest extends QLibPlugin {
 
     private final double CONFIG_VERSION = 4.6;
     @Getter private static SellChest instance;
-    
-    @Getter private YAMLConfiguration messages;
+
     @Getter private YAMLConfiguration configuration;
+    @Getter private YAMLConfiguration messages;
+    @Getter private YAMLConfiguration boostConfig;
     
     @Getter private Economy economy;
     
     @Getter private ItemManager itemManager;
-    
-    @Getter private ArrayList<ItemsManager> blacklist = new ArrayList<>();
+    @Getter private BoostManager boostManager;
 
     /*
      * TODO
      * 1. Usare QLib per booster menu
-     * 2. Cambiare sistema dei booster
+     * 2. Cambiare sistema dei booster FATTO
      * 3. Migliorare la blacklist
      * 4. Ottimizzare il plugin
      */
@@ -43,11 +41,19 @@ public class SellChest extends QLibPlugin {
         registerConfig();
         registerEvents();
         registerExecutors();
+        
         itemManager = new ItemManager();
+        boostManager = new BoostManager();
+        
         thereIsAnUpdate();
         
         logs.infoLog("SellChest > Plugin enabled!", true);
         logs.infoLog("SellChest > Plugin created by Maymity!", true);
+    }
+
+    @Override
+    public void onDisable() {
+        boostManager.saveBoosts();
     }
 
     private void registerEvents() {
@@ -68,6 +74,7 @@ public class SellChest extends QLibPlugin {
     private void registerConfig(){
         configuration = new YAMLConfiguration("config", this);
         messages = new YAMLConfiguration("messages", this);
+        boostConfig = new YAMLConfiguration("boosts", this);
 
         if (configuration.getString("settings.config_version") == null || configuration.getDouble("settings.config_version") < CONFIG_VERSION) {
             logs.infoLog("&cYou config is out of date!", true);
@@ -111,7 +118,7 @@ public class SellChest extends QLibPlugin {
             logs.errorLog("========================================================", true);
             logs.errorLog("SellChest Update Checker", true);
             logs.errorLog("Could not connect to Spigot's API!", true);
-            logs.errorLog("Error: ", e.getStackTrace());
+            logs.errorLog("For the stacktrace please check log file. ", e.getStackTrace());
             logs.errorLog("========================================================", true);
         }
     }

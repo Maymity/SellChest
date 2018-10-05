@@ -1,4 +1,4 @@
-package it.maymity.sellchest.newmanagers;
+package it.maymity.sellchest.items;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
