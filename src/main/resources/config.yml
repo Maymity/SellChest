@@ -1,0 +1,19 @@
+settings:
+ config_version: 4.6
+ check_update_on_join: true
+ sign_line: '[SellChest]'
+
+itemsold:
+- IRON_INGOT:10.00
+- LOG:1:50.50
+
+signMessage:
+- '&7[&cSellChest&7]'
+- '&7Click For'
+- '&7sell item'
+- '&7in this Chest'
+
+game_sell_booster:
+ time: 60
+ multiplier: 2.0
+ price: 10000
