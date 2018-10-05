@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 public class Item {
     private Material material;
     private short damage;
-    private double prize;
+    private double price;
     
     public boolean isItem(ItemStack item){
         return item.getType() == material && item.getDurability() == damage;

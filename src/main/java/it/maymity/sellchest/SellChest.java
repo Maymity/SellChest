@@ -1,9 +1,12 @@
 package it.maymity.sellchest;
 
 import it.maymity.sellchest.boosts.BoostManager;
+import it.maymity.sellchest.boosts.BuyBoostAction;
 import it.maymity.sellchest.commands.SellChestCommand;
 import it.maymity.sellchest.items.ItemManager;
-import it.maymity.sellchest.listeners.*;
+import it.maymity.sellchest.listeners.SignEvents;
+import it.maymity.sellchest.listeners.UpdaterEvents;
+import it.xquickglare.qlib.actions.ActionManager;
 import it.xquickglare.qlib.configuration.YAMLConfiguration;
 import it.xquickglare.qlib.objects.QLibPlugin;
 import lombok.Getter;
@@ -21,16 +24,17 @@ public class SellChest extends QLibPlugin {
     @Getter private YAMLConfiguration boostConfig;
     
     @Getter private Economy economy;
-    
+
+    @Getter private SpigotUpdater spigotUpdater;
     @Getter private ItemManager itemManager;
     @Getter private BoostManager boostManager;
 
     /*
      * TODO
-     * 1. Usare QLib per booster menu
+     * 1. Usare QLib per booster menu FATTO
      * 2. Cambiare sistema dei booster FATTO
      * 3. Migliorare la blacklist
-     * 4. Ottimizzare il plugin
+     * 4. Ottimizzare il plugin FATTO
      */
     
     public void onEnable() { instance = this;
@@ -39,14 +43,15 @@ public class SellChest extends QLibPlugin {
         
         setupDepends();
         registerConfig();
-        registerEvents();
-        registerExecutors();
-        
+        checkForUpdates();
+
         itemManager = new ItemManager();
         boostManager = new BoostManager();
-        
-        thereIsAnUpdate();
-        
+
+        registerEvents();
+        registerExecutors();
+        registerActions();
+
         logs.infoLog("SellChest > Plugin enabled!", true);
         logs.infoLog("SellChest > Plugin created by Maymity!", true);
     }
@@ -57,11 +62,8 @@ public class SellChest extends QLibPlugin {
     }
 
     private void registerEvents() {
-        Bukkit.getPluginManager().registerEvents(new InventoryClick(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerInteract(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerJoin(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerQuit(), this);
-        Bukkit.getPluginManager().registerEvents(new SignChange(), this);
+        Bukkit.getPluginManager().registerEvents(new SignEvents(), this);
+        Bukkit.getPluginManager().registerEvents(new UpdaterEvents(), this);
     }
 
     private void registerExecutors() {
@@ -83,6 +85,12 @@ public class SellChest extends QLibPlugin {
             logs.infoLog("&cNewest version: &a" + CONFIG_VERSION, true);
         }
     }
+
+    private void registerActions(){
+        ActionManager am = getQLib().getActionManager();
+
+        am.addAction(new BuyBoostAction());
+    }
     
     private void setupDepends(){
         //Vault
@@ -95,18 +103,16 @@ public class SellChest extends QLibPlugin {
         }
     }
     
-    private void thereIsAnUpdate(){
-        SpigotUpdater updater = new SpigotUpdater(this, 43857);
+    private void checkForUpdates(){
+        spigotUpdater = new SpigotUpdater(this, 43857);
         try {
-            if (updater.checkForUpdates()) {
-                Utils.getInstance().setBoolUpdate(true);
-                Utils.getInstance().setUpdateLink(updater.getResourceURL());
+            if (spigotUpdater.checkForUpdates()) {
                 logs.infoLog("========================================================", true);
                 logs.infoLog("SellChest Update Checker", true);
                 logs.infoLog("There is a new update available", true);
-                logs.infoLog("Latest Version: " + updater.getLatestVersion(), true);
-                logs.infoLog("Your Version: " + updater.getPlugin().getDescription().getVersion(), true);
-                logs.infoLog("Get it here: " + updater.getResourceURL(), true);
+                logs.infoLog("Latest Version: " + spigotUpdater.getNewVersion(), true);
+                logs.infoLog("Your Version: " + getDescription().getVersion(), true);
+                logs.infoLog("Get it here: " + spigotUpdater.getResourceURL(), true);
                 logs.infoLog("========================================================", true);
             } else {
                 logs.infoLog("========================================================", true);

@@ -1,46 +1,35 @@
 package it.maymity.sellchest;
 
+import lombok.Getter;
+import org.apache.commons.io.IOUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 
-class SpigotUpdater {
+public class SpigotUpdater {
 
     private int project;
-    private URL checkURL;
-    private String newVersion;
+    @Getter private String newVersion;
     private JavaPlugin plugin;
 
-    SpigotUpdater(JavaPlugin plugin, int projectID) {
+    @Getter private boolean thereIsAnUpdate;
+
+    SpigotUpdater(JavaPlugin plugin, int project) {
         this.plugin = plugin;
         this.newVersion = plugin.getDescription().getVersion();
-        this.project = projectID;
-        try {
-            this.checkURL = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + projectID);
-        } catch (MalformedURLException e) {
-        }
+        this.project = project;
     }
 
-    JavaPlugin getPlugin() {
-        return plugin;
-    }
-
-    String getLatestVersion() {
-        return newVersion;
-    }
-
-    String getResourceURL() {
+    public String getResourceURL() {
         return "https://www.spigotmc.org/resources/" + project;
     }
 
     boolean checkForUpdates() throws Exception {
-        URLConnection con = checkURL.openConnection();
-        this.newVersion = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
-        return !plugin.getDescription().getVersion().equals(newVersion);
+        URL url = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + project);
+        this.newVersion = IOUtils.readLines(url.openStream()).get(0);
+        this.thereIsAnUpdate = !plugin.getDescription().getVersion().equals(newVersion);
+
+        return thereIsAnUpdate;
     }
 
 }

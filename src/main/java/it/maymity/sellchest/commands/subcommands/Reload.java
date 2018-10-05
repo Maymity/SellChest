@@ -18,8 +18,10 @@ public class Reload extends SubCommand {
     public void execute(CommandSender sender, String[] args) {
         plugin.getConfiguration().reload();
         plugin.getMessages().reload();
+
         plugin.getItemManager().reloadItems();
-        
+        plugin.getBoostManager().reload();
+
         plugin.getMessages().getMessage("messages.reload").sendMessage(sender);
     }
 }

@@ -1,0 +1,17 @@
+name: '&6Buy your boost!'
+rows: 1
+
+items:
+  buyBoost:
+    name: '&a&lSell Booster'
+    material: CHEST
+    slot: 4
+    lore:
+    - '&7You will receive more money'
+    - '&7from selling items.'
+    - ''
+    - '&a&lMultiplier:&f x%multiplier'
+    - '&a&lDuration:&f %minutes minutes (%seconds seconds)'
+    action:
+    - 'BUY-BOOSTER'
+    - 'CLOSE-INVENTORY'

@@ -58,7 +58,7 @@ public class ItemManager {
             if(sellable == null)
                 continue;
             
-            price += sellable.getPrize();
+            price += sellable.getPrice();
             inventory.removeItem(item);
         }
         
