@@ -23,10 +23,10 @@ public class ItemManager {
     
     public void reloadItems(){
         items.clear();
-        Configuration section = plugin.getConfiguration().getSection("itemsold");
+        List<String> itemsString = plugin.getConfiguration().getStringList("itemsold");
 
-        for (String key : section.getKeys()) {
-            String[] info = section.getString(key).split(":");
+        for (String key : itemsString) {
+            String[] info = key.split(":");
 
             Material mat = Material.valueOf(info[0]);
             double prezzo = Double.parseDouble(info[1]);
@@ -54,6 +54,9 @@ public class ItemManager {
         double price = 0;
 
         for (ItemStack item : conts) {
+            if(item == null)
+                continue;
+
             Item sellable = getSellable(item);
             if(sellable == null)
                 continue;

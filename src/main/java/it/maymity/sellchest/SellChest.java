@@ -16,7 +16,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class SellChest extends QLibPlugin {
 
-    private final double CONFIG_VERSION = 4.6;
+    private final double CONFIG_VERSION = 5.0;
     @Getter private static SellChest instance;
 
     @Getter private YAMLConfiguration configuration;
@@ -28,14 +28,6 @@ public class SellChest extends QLibPlugin {
     @Getter private SpigotUpdater spigotUpdater;
     @Getter private ItemManager itemManager;
     @Getter private BoostManager boostManager;
-
-    /*
-     * TODO
-     * 1. Usare QLib per booster menu FATTO
-     * 2. Cambiare sistema dei booster FATTO
-     * 3. Migliorare la blacklist
-     * 4. Ottimizzare il plugin FATTO
-     */
     
     public void onEnable() { instance = this;
         super.onEnable();

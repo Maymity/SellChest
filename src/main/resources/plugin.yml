@@ -1,8 +1,8 @@
 name: SellChest
-version: 4.7
+version: 5.0
 author: Maymity
 depend: [Vault, QLib]
-main: it.maymity.sellchest.SellChesr
+main: it.maymity.sellchest.SellChest
 commands:
   sellchest:
     description: View the plugin information/Boost Command

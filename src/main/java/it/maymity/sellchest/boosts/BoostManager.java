@@ -49,12 +49,12 @@ public class BoostManager {
         if(boost == null)
             return -1;
 
-        return TimeUnit.MILLISECONDS.toSeconds(boost.getExpireTime());
+        return TimeUnit.MILLISECONDS.toSeconds(boost.getExpireTime()-System.currentTimeMillis());
     }
 
     private Boost getBoost(Player player){
         for (Boost boost : boosts) {
-            if(boost.getPlayer() == player.getUniqueId())
+            if(boost.getPlayer().toString().equals(player.getUniqueId().toString()))
                 return boost;
         }
 
@@ -84,7 +84,7 @@ public class BoostManager {
 
     public void saveBoosts(){
         for (Boost boost : boosts)
-            plugin.getBoostConfig().set(boost.getPlayer().toString(), boost.getExpireTime());
+            plugin.getBoostConfig().set("boosts." + boost.getPlayer().toString(), boost.getExpireTime());
         plugin.getBoostConfig().saveConfiguration();
 
         plugin.getLogs().infoLog("Saved all boosts in the config.", true);
@@ -92,6 +92,11 @@ public class BoostManager {
     
     private void loadFromConfig(){
         Configuration section = plugin.getBoostConfig().getSection("boosts");
+        if(section == null)
+            return;
+
+        if(section.getKeys() == null)
+            return;
 
         for (String key : section.getKeys()) {
             UUID uuid = UUID.fromString(key);

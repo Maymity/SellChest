@@ -5,6 +5,8 @@ items:
   buyBoost:
     name: '&a&lSell Booster'
     material: CHEST
+    data: 0
+    amount: 1
     slot: 4
     lore:
     - '&7You will receive more money'
@@ -12,6 +14,6 @@ items:
     - ''
     - '&a&lMultiplier:&f x%multiplier'
     - '&a&lDuration:&f %minutes minutes (%seconds seconds)'
-    action:
+    actions:
     - 'BUY-BOOSTER'
     - 'CLOSE-INVENTORY'

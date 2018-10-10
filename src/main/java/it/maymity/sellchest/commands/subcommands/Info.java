@@ -25,6 +25,6 @@ public class Info extends SubCommand {
 
         long time = plugin.getBoostManager().getSecondsRemaining(player);
         
-        plugin.getMessages().getMessage("messages.time_remaining").setVariable("time", String.valueOf(time));
+        plugin.getMessages().getMessage("messages.time_remaining").setVariable("time", String.valueOf(time)).sendMessage(player);
     }
 }

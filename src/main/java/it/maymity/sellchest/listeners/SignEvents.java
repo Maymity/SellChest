@@ -45,7 +45,7 @@ public class SignEvents implements Listener {
 
     @EventHandler
     public void onSignInteract(PlayerInteractEvent event) {
-        if(event.getAction() != Action.RIGHT_CLICK_AIR)
+        if(event.getAction() != Action.RIGHT_CLICK_BLOCK)
             return;
 
         Player player = event.getPlayer();
@@ -97,7 +97,7 @@ public class SignEvents implements Listener {
             price *= plugin.getBoostManager().getMultiplier();
 
         plugin.getEconomy().depositPlayer(player, price);
-        plugin.getMessages().getMessage("messages.sell_message").setVariable("money", String.valueOf(price));
+        plugin.getMessages().getMessage("messages.sell_message").setVariable("money", String.valueOf(price)).sendMessage(player);
     }
 
 }
