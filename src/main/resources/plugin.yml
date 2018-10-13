@@ -1,5 +1,5 @@
 name: SellChest
-version: 5.0
+version: 5.1
 author: Maymity
 depend: [Vault, QLib]
 main: it.maymity.sellchest.SellChest
